@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Salvi-BOT</title>
+</head>
+<body>
+
+
+
+    <header>
+
+       
+
+    </header>
+
+
+    <div class="carousel">  <!-- Contenedor para un carrusel de imágenes -->
+        <div class="list">  <!-- Lista de elementos en el carrusel -->
+            <!-- Cada "item" representa un elemento del carrusel -->
+            <div class="item">
+                <img class="item2" alt="" src="{{ url_for('static', filename='img.jpg') }}"><!-- Imagen con ruta estática -->
+                <div class="content"><!-- Contenedor para el contenido textual -->
+                    <div class="title">Centro Historico</div>
+                    <div class="des"><p class="parra">Los centros históricos son la parte más antigua de cualquier ciudad,representan las primeras construcciones de su fundación e incluyen espacios donde se ubican los principales mercados, comercios, oficinas públicas y casas de las familias fundadoras.</p></div>
+                </div>
+            </div>
+
+            <div class="item">
+                <img class="item2" alt="" src="{{ url_for('static', filename='img2.jpg') }}">
+                <div class="content">
+                    <div class="title">Tazumal</div>
+                    <div class="des"><p class="parra2">Tazumal fue el escenario de un importante y sofisticado asentamiento maya que existió alrededor de los años 100 y 1200 d.C. Tras una larga ocupación, el sitio fue abandonado alrededor del año 1200 d.C. y ahora es un tesoro lleno de historia.</p></div>
+                </div>
+
+            </div>
+
+            <div class="item">
+                <img class="item2" alt="" src="{{ url_for('static', filename='img3.jpg') }}">
+                <div class="content">
+                    <div class="title">Catedral </div>
+                    <div class="des"><p class="parra3">Reliquias importantes custodiadas en la catedral son la Cruz de los Ángeles, y la Cruz de la Victoria, que conmemora la batalla de Covadonga. Destaca también su Retablo tardobarroco, su Hospital de Peregrinos, y en él, el olivo centenario que, según la tradición, fue traído desde Tierra Santa por un peregrino.</p></div>
+                </div>
+
+            </div>
+
+            <div class="item">
+                <img class="item2" alt="" src="{{ url_for('static', filename='img4.jpg') }}">
+                <div class="content">
+                    <div class="title">Casa presidencial</div>
+                    <div class="des"><p class="parra4">Salón Azul donde se congregaba la Asamblea Legislativa y la prensa nacional. Patio Central del Palacio Nacional previo a su restauración e investidura presidencial de Nayib Bukele. Proceso de restauración de las habitaciones del Palacio Nacional.</p></div>
+                </div>
+
+            </div>
+
+            <div class="item">
+                <img class="item2" alt="" src="{{ url_for('static', filename='img5.jpg') }}">
+                <div class="content">
+                    <div class="title">Volcan de Izalco</div>
+                    <div class="des"><p class="parra5">El nombre de Izalco tiene su origen en el idioma náhuat, puede venir de ītzcalco (itzkalku en náhuat salvadoreño) que significa literalmente: «en el lugar de la(s) casa(s) de obsidiana», sin embargo, su significado común es «en el lado (derecho o izquierdo)».</p></div>
+                </div>
+
+            </div>
+
+            <div class="item">
+                <img class="item2" alt="" src="{{ url_for('static', filename='img6.jpg') }}">
+                <div class="content">
+                    <div class="title">Lago de coatepeque</div>
+                    <div class="des"><p class="parra6">La caldera se formó como resultado de una gran erupción explosiva que sucedió entre 57,000-72,000 a. C. Luego se formaron conos de escorias y flujos de lava en la parte occidental de la caldera, así como 6 domos de lava (Rhyodacite). La formación del domo más reciente se inició alrededor de 8000 a.</p></div>
+                </div>
+
+            </div>
+
+            <div class="item">
+                <img class="item2" alt="" src="{{ url_for('static', filename='img7.jpg') }}">
+                <div class="content">
+                    <div class="title">Pupusas</div>
+                    <div class="des"><p class="parra7"> Hasta la fecha, se desconoce el origen de las pupusas, por lo que no se puede decir de qué país proviene, pero en su momento El Salvador y Honduras se atribuían su autoría. Historiadores señalan a la región mesoamericana como su lugar de origen.</p></div>
+                </div>
+
+            </div>
+
+            <div class="item">
+                <img class="item2" alt="" src="{{ url_for('static', filename='img8.jpg') }}">
+                <div class="content">
+                    <div class="title">Cultura</div>
+                    <div class="des"><p class="parra8">Los pueblos originarios que actualmente habitan El Salvador son Nahuapipil, Lenca y Cacaopera. Fenómenos como la globalización y la migración forzada han desarticulado en gran medida su tejido social y amenaza sus costumbres, lengua y conocimiento tradicional.</p></div>
+                </div>
+
+            </div>
+
+            <div class="item">
+                <img class="item2" alt="" src="{{ url_for('static', filename='img9.jpg') }}">
+                <div class="content">
+                    <div class="title">Guerra civil</div>
+                    <div class="des"><p class="parra9">La Guerra Civil de El Salvador ocurrió entre 1980 y 1992. Fue uno de los últimos conflictos ocurridos en el marco de la Guerra Fría en el que se enfrentaron indirectamente Estados Unidos de América (EE. UU.)</p> </div>
+                </div>
+
+            </div>
+
+            
+
+
+        </div>
+
+        <!--next prev button-->
+        <div class="arrows">
+            <button class="prev"><</button> <!-- Botón para ir al elemento anterior -->
+            <button class="next">></button><!-- Botón para ir al siguiente elemento -->
+        </div>
+
+
+        <!-- Elemento para mostrar el tiempo de ejecución del carrusel -->
+        <div class="timeRunning"></div>
+
+    </div>
+
+
+
+
+
+    <!-- Contenedor principal para el chatbot -->
+    <div class="container">
+        <div class="box" id="expandableBox"><!-- Caja expandible para el chatbot -->
+            <img src="{{ url_for('static', filename='Salvi-Bot.png') }}" alt="Imagen expandible" id="image">
+            
+            <!-- Agregar la estructura de ChatSV dentro del cuadrado azul -->
+            <div id="chatbot-container" class="chatbot-container">
+                <div class="div_img2">
+                    <img class="img2" src="{{ url_for('static', filename='Simbolo-sv.png') }}" alt="Logo Placeholder">
+                </div>
+                <div class="header">
+                    <div class="div_img1">
+                        <img class="img1" src="{{ url_for('static', filename='logo.png') }}" alt="Logo Placeholder">
+                    </div>
+                    <h1 class="h1">Salvi-BOT</h1>
+                </div>
+
+                <!-- Contenedor exclusivo para el área de conversación -->
+                <div id="chatbot-chat" class="chat-container">
+                    <div id="chatbot-history" class="chat-history"></div>
+                </div>
+            </div>
+
+            <button class="close-btn" id="closeBtn">×</button>
+
+            <div class="input-container" style="display: none;">
+                <textarea id="userInput" rows="1" style="resize: none;" placeholder="Haz una consulta"></textarea>
+                <button id="sendBtn" style="font-size: 20px;">&#8594;</button> <!-- Cambiado a símbolo de flecha -->
+                <button id="stopBtn" style="font-size: 20px;" class="hidden">&#9632;</button> <!-- Botón de detener -->
+            </div>
+            
+        </div>
+    </div>
+
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

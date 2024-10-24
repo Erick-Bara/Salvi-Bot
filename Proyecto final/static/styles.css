@@ -1,0 +1,885 @@
+/* Establece márgenes y rellenos a 0, y aplica un modelo de caja consistente */
+* {
+    margin: 0;  /* Elimina los márgenes predeterminados de todos los elementos */
+    padding: 0; /* Elimina los rellenos predeterminados de todos los elementos */
+    box-sizing: border-box; /* Incluye padding y borde en el ancho y alto total */
+}
+
+/* Establece estilos globales para el cuerpo y el HTML */
+body, html {
+    height: 100%;  /* Asegura que el cuerpo y el HTML ocupen toda la altura de la ventana */
+    font-family: Arial, sans-serif; /* Define la fuente principal de la página */
+    overflow: hidden; /* Evita que se muestre una barra de desplazamiento */
+}
+
+/* Contenedor principal para centrar el contenido */
+.container {
+    display: flex; /* Utiliza flexbox para organizar elementos dentro */
+    justify-content: center; /* Centra horizontalmente el contenido */
+    align-items: center; /* Centra verticalmente el contenido */
+    height: 100vh; /* Ocupa toda la altura de la ventana */
+    margin: 0; /* Elimina el margen */
+}
+
+/* Estilo para el cuadro principal que contiene el chatbot */
+.box {
+    width: 300px;  /* Ancho del cuadro */
+    height: 300px; /* Altura del cuadro */
+    display: flex; /* Utiliza flexbox para organizar elementos dentro */
+    flex-direction: column; /* Alinea elementos en columna */
+    justify-content: center; /* Centra el contenido verticalmente */
+    position: relative; /* Permite el posicionamiento de elementos internos */
+    border-radius: 8px; /* Bordes redondeados */
+    overflow: hidden; /* Oculta cualquier contenido que desborde el cuadro */
+}
+
+/* Estilo para las imágenes dentro del cuadro */
+.box img {
+    width: 100%; /* La imagen ocupa todo el ancho del cuadro */
+    height: 100%; /* La imagen ocupa toda la altura del cuadro */
+    object-fit: cover; /* Asegura que la imagen cubra el cuadro sin deformarse */
+    transition: all 0.5s ease; /* Transición suave para cambios de estilo */
+}
+
+/* Estilo para cuando el cuadro está expandido */
+.expanded {
+    width: 100%; /* Ancho completo de la ventana */
+    height: 100vh; /* Altura completa de la ventana */
+    position: fixed; /* Fija la posición en la ventana */
+    top: 0; /* Alinear al borde superior */
+    left: 0; /* Alinear al borde izquierdo */
+    border-radius: 0; /* Sin bordes redondeados */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+    cursor: default; /* Cambia el cursor a predeterminado */
+    background: linear-gradient(80deg, rgba(0, 77, 123, 1) 0%, rgba(57, 127, 183, 1) 100%); /* Fondo con degradado */
+}
+
+/* Oculta la imagen cuando el cuadro está expandido */
+.expanded img {
+    display: none; /* Oculta la imagen */
+}
+
+/* Estilo para el botón de cerrar */
+.close-btn {
+    position: absolute; /* Posición absoluta para colocarlo en la esquina */
+    top: 20px; /* Alineación desde el borde superior */
+    right: 20px; /* Alineación desde el borde derecho */
+    width: 30px; /* Ancho del botón */
+    height: 30px; /* Altura del botón */
+    background-color: white; /* Color de fondo blanco */
+    border-radius: 50%; /* Bordes redondeados (forma de círculo) */
+    display: none; /* Oculto inicialmente */
+    justify-content: center; /* Centra el contenido en el botón */
+    align-items: center; /* Centra verticalmente el contenido en el botón */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    color: #3498db; /* Color del texto del botón */
+    font-weight: bold; /* Texto en negrita */
+    border: none; /* Sin borde */
+    z-index: 1001; /* Asegura que esté por encima de otros elementos */
+}
+
+/* Muestra el botón de cerrar cuando el cuadro está expandido */
+.expanded .close-btn {
+    display: flex; /* Muestra el botón como flexbox */
+}
+
+/* Cambia el color de fondo del botón al pasar el mouse */
+.close-btn:hover {
+    background-color: #f1f1f1; /* Color de fondo al hacer hover */
+}
+
+/* Estilos para el contenedor del chatbot */
+#chatbot-container {
+    display: none; /* Oculto inicialmente */
+    flex-direction: column; /* Alinea elementos en columna */
+    justify-content: space-between; /* Espacio uniforme entre elementos */
+    width: 100%; /* Ancho completo */
+    height: 400px; /* Altura del contenedor del chatbot */
+    margin-bottom: 120px; /* Margen inferior */
+}
+
+/* Muestra el contenedor del chatbot solo cuando está expandido */
+.expanded #chatbot-container {
+    display: flex; /* Muestra el contenedor */
+}
+
+/* Estilo para el historial de chat */
+.chat-history {
+    display: flex; /* Usa flexbox para alinear mensajes */
+    flex-direction: column; /* Alinea mensajes en columna */
+    margin-right: 300px; /* Margen a la derecha */
+    margin-left: 300px; /* Margen a la izquierda */
+    gap: 10px; /* Espaciado entre mensajes */
+    max-height: 350px; /* Altura máxima para el área de conversación */
+    overflow-y: auto; /* Permite desplazamiento si el contenido es mayor que el contenedor */
+    margin-bottom: 10px; /* Espacio para el input */
+    padding-right: 10px; /* Espacio a la derecha para el scroll */
+    margin-top: 80px; /* Espacio superior para separar del título */
+}
+
+/* Estilo para los mensajes de chat */
+.chat-message {
+    max-width: 70%; /* Ancho máximo del mensaje */
+    padding: 10px; /* Relleno interno */
+    border-radius: 5px; /* Bordes redondeados */
+    color: #000; /* Color del texto */
+}
+
+/* Estilo para los mensajes del usuario (a la derecha) */
+.user-message {
+    align-self: flex-end; /* Alinea a la derecha */
+    background-color: #d3d3d3; /* Color de fondo del mensaje del usuario */
+    color: rgb(0, 0, 0); /* Color del texto */
+    border-radius: 30px; /* Bordes redondeados */
+    box-shadow: 2px 2px 2px black; /* Sombra para dar profundidad */
+}
+
+/* Estilo para los mensajes del bot (a la izquierda) */
+.bot-message {
+    align-self: flex-start; /* Alinea a la izquierda */
+    background-color: #d3d3d3; /* Color de fondo del mensaje del bot */
+    color: rgb(0, 0, 0); /* Color del texto */
+    border-radius: 30px; /* Bordes redondeados */
+    padding: 10px 20px; /* Relleno interno con más espacio horizontal */
+    box-shadow: 2px 2px 2px black; /* Sombra para dar profundidad */
+}
+
+/* Estilo para el contenedor de entrada de texto */
+.input-container {
+    position: fixed; /* Posiciona el contenedor en un lugar fijo */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    margin-top: auto; /* Mueve el contenedor al fondo del box */
+    padding: 20px; /* Espaciado interno */
+    position: absolute; /* Posición absoluta para mantener el input en el fondo */
+    margin-bottom: 30px; /* Alinear al fondo del contenedor */
+    left: 0; /* Alineación desde la izquierda */
+    right: 0; /* Alineación desde la derecha (expandirse) */
+}
+
+/* Estilo para el campo de entrada del usuario */
+#userInput {
+    width: 50%; /* Ancho deseado del campo de texto */
+    max-height: 100px; /* Altura máxima antes de permitir scroll */
+    min-height: 50px; /* Altura mínima para que el textarea sea visible */
+    overflow-y: auto; /* Mostrar scroll solo cuando sea necesario */
+    padding: 15px 80px 15px 30px; /* Espaciado interno */
+    box-sizing: border-box; /* Incluye padding en el ancho total */
+    border-radius: 50px; /* Bordes redondeados */
+    resize: none; /* Evita que el usuario cambie el tamaño del textarea */
+    transition: border-radius 0.3s; /* Transición suave para el border-radius */
+    text-align: left; /* Alinear el texto a la izquierda */
+    line-height: 1.5; /* Ajustar el espaciado entre líneas */
+    font-size: 1rem; /* Tamaño de fuente */
+    color: white; /* Color del texto */
+    border: 2px solid #000; /* Borde negro */
+    background-color: #2d2d2d; /* Color de fondo oscuro */
+}
+
+/* Cuando el textarea tiene mucho contenido */
+#userInput.expanded {
+    border-radius: 10px; /* Cambia el border-radius a menor cuando crece */
+}
+
+/* Estilo para el botón de enviar */
+#sendBtn {
+    padding: 10px; /* Espaciado interno */
+    background-color: #000000; /* Color de fondo negro */
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    border-radius: 15px 15px 15px 0px; /* Bordes redondeados a la derecha */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    margin-left: 10px; /* Margen a la izquierda */
+}
+
+/* Estilo para el botón de detener */
+#stopBtn {
+    padding: 10px; /* Espaciado interno */
+    background-color: #000000; /* Color de fondo negro */
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    border-radius: 15px 15px 15px 0px; /* Bordes redondeados a la derecha */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    margin-left: 10px; /* Margen a la izquierda */
+    width: 40px; /* Ancho específico del botón */
+}
+
+/* Cambia el color de fondo del botón de enviar al pasar el mouse */
+#sendBtn:hover {
+    background-color: #0056b3; /* Color de fondo al hacer hover */
+}
+
+/* Estilo para el contenedor de entrada de texto, oculto inicialmente */
+.input-container {
+    display: none; /* Ocultar inicialmente */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    margin-top: auto; /* Mueve el contenedor al fondo del box */
+    padding: 10px; /* Espaciado interno */
+    position: absolute; /* Posición absoluta para mantener el input en el fondo */
+    bottom: 0; /* Alinear al fondo del contenedor */
+    left: 0; /* Alinear desde la izquierda */
+    right: 0; /* Expandir hacia los lados */
+}
+
+/*primera vez editado ---------------------------------------------------------*/
+/* Muestra el contenedor de entrada cuando el cuadro está expandido */
+.expanded .input-container {
+    display: flex; /* Muestra el contenedor de entrada como flexbox */
+}
+
+/* Aplicar transición al cuadro expandible */
+#expandableBox {
+    transition: all 0.9s ease; /* Transición suave de 0.9 segundos para todas las propiedades */
+}
+
+/* Oculta el contenedor del chatbot */
+#chatbot-container.hidden {
+    display: none; /* El contenedor no se muestra */
+}
+
+/* Estilo para la imagen 2 */
+.div_img2 {
+    position: absolute; /* Posiciona la imagen de forma absoluta */
+    top: 30px; /* Alinea desde el borde superior */
+    left: 30px; /* Alinea desde el borde izquierdo */
+    width: 150px; /* Ancho específico de la imagen */
+}
+
+/* Estilo para la imagen 1 */
+.div_img1 {
+    position: absolute; /* Posiciona la imagen de forma absoluta */
+    top: 20px; /* Alinea desde el borde superior */
+    margin-left: 700px; /* Margen a la izquierda */
+    width: 100px; /* Ancho específico de la imagen */
+}
+
+/* Estilo para el título principal */
+h1 {
+    margin-top: 60px; /* Margen superior para separar del borde */
+    position: absolute; /* Posiciona el título de forma absoluta */
+    color: white; /* Color del texto del título */
+    margin-left: 530px; /* Margen a la izquierda para centrar */
+}
+
+/* Estilo para las imágenes dentro del cuadro */
+.box img {
+    width: 100%; /* Imagen ocupa todo el ancho del cuadro */
+    height: 100%; /* Imagen ocupa toda la altura del cuadro */
+    object-fit: cover; /* Asegura que la imagen cubra el cuadro sin deformarse */
+    transition: all 0.5s ease; /* Transición suave para cambios de estilo */
+}
+
+/* Estilo para cuando el cuadro está expandido */
+.expanded {
+    width: 100vw !important; /* Fuerza el ancho completo de la ventana */
+    height: 100vh !important; /* Fuerza la altura completa de la ventana */
+    position: fixed; /* Fija la posición en la ventana */
+    top: 0; /* Alinear al borde superior */
+    left: 0; /* Alinear al borde izquierdo */
+    right: 0; /* Alinear al borde derecho */
+    bottom: 0; /* Alinear al borde inferior */
+    margin: 0; /* Elimina el margen */
+    border-radius: 0; /* Sin bordes redondeados */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+    background: linear-gradient(80deg, rgba(0, 77, 123, 1) 0%, rgba(57, 127, 183, 1) 100%); /* Fondo con degradado */
+}
+
+/* Ajustes para el contenedor del chatbot */
+#chatbot-container {
+    display: none; /* Oculto inicialmente */
+    flex-direction: column; /* Alinea elementos en columna */
+    justify-content: space-between; /* Espacio uniforme entre elementos */
+    width: 100%; /* Ancho completo */
+    height: 100vh; /* Altura completa de la ventana */
+    position: relative; /* Posición relativa para elementos hijos */
+}
+
+/* Muestra el contenedor del chatbot cuando está expandido */
+.expanded #chatbot-container {
+    display: flex; /* Muestra el contenedor */
+}
+
+/* Media Queries para ajustes en dispositivos móviles */
+@media screen and (max-width: 767px) {
+    /* Ajustes para el historial de chat en móviles */
+    .chat-history {
+        margin: 60px 10px 10px 10px; /* Margen ajustado */
+        max-height: calc(90vh - 150px); /* Altura máxima del chat en móviles */
+        width: auto; /* Ancho automático */
+        padding: 10px; /* Espaciado interno */
+    }
+
+    /* Ajuste del contenedor de entrada para móviles */
+    .input-container {
+        position: fixed; /* Posición fija al fondo */
+        bottom: 0; /* Alinear al fondo */
+        left: 0; /* Alinear desde la izquierda */
+        right: 0; /* Expandir hacia la derecha */
+        width: 100%; /* Ancho completo */
+        padding: 10px; /* Espaciado interno */
+    }
+
+    /* Estilo para el campo de entrada del usuario en móviles */
+    #userInput {
+        width: 85%; /* Ancho deseado del campo de texto */
+        margin: 0 auto; /* Centra el campo de texto */
+    }
+
+    /* Ajustes de las imágenes para móviles */
+    .div_img2 {
+        top: 10px; /* Alinea desde el borde superior */
+        left: 10px; /* Alinea desde el borde izquierdo */
+        width: 80px; /* Ancho ajustado para móviles */
+    }
+
+    .div_img1 {
+        top: 10px; /* Alinea desde el borde superior */
+        right: 10px; /* Alinea desde el borde derecho */
+        left: auto; /* No utiliza margen a la izquierda */
+        width: 60px; /* Ancho ajustado para móviles */
+        margin-left: 0; /* Sin margen a la izquierda */
+    }
+
+    /* Ajuste del título para móviles */
+    h1 {
+        width: 100%; /* Ancho completo */
+        text-align: center; /* Centra el texto */
+        margin: 15px 0; /* Margen superior e inferior */
+        position: fixed; /* Posición fija en la parte superior */
+        top: 0; /* Alinear al borde superior */
+        left: 0; /* Alinear desde la izquierda */
+        font-size: 1.5em; /* Tamaño de fuente ajustado */
+    }
+
+    /* Asegurarse de que el botón de cerrar sea visible */
+    .close-btn {
+        top: 10px; /* Alinea desde el borde superior */
+        right: 10px; /* Alinea desde el borde derecho */
+        z-index: 1002; /* Asegura que esté encima de otros elementos */
+    }
+}
+
+/* Ajustes específicos para pantallas muy pequeñas */
+@media screen and (max-width: 360px) {
+    /* Ajustes para el historial de chat */
+    .chat-history {
+        margin: 50px 5px 70px 5px; /* Margen ajustado */
+    }
+
+    /* Estilo para el campo de entrada del usuario */
+    #userInput {
+        width: 90%; /* Ancho ajustado para móviles pequeños */
+        padding: 8px 15px; /* Espaciado interno ajustado */
+    }
+
+    /* Ajuste del título para móviles pequeños */
+    h1 {
+        font-size: 1.2em; /* Tamaño de fuente ajustado */
+    }
+}
+
+/* Ajustes para orientación horizontal en móviles */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    /* Ajustes para el historial de chat en orientación horizontal */
+    .chat-history {
+        margin: 40px 10px 60px 10px; /* Margen ajustado */
+        max-height: calc(70vh - 120px); /* Altura máxima ajustada */
+    }
+
+    /* Ajuste del contenedor de entrada en horizontal */
+    .input-container {
+        padding: 5px; /* Espaciado interno ajustado */
+    }
+
+    /* Ajuste del título en horizontal */
+    h1 {
+        font-size: 1.2em; /* Tamaño de fuente ajustado */
+        margin: 5px 0; /* Margen ajustado */
+    }
+}
+
+/*segunda vez editado ----------------------------------------------------------------*/
+
+
+/* Contenido original */
+/* Carrusel */
+.carousel {
+    position: relative; /* Posición relativa para contener elementos absolutamente posicionados */
+    width: 100vw; /* Ancho del carrusel ocupa todo el ancho de la ventana */
+    height: 100vh; /* Altura del carrusel ocupa toda la altura de la ventana */
+    overflow: hidden; /* Oculta contenido que se desborda del carrusel */
+}
+
+/* Elementos del carrusel */
+.carousel-item {
+    position: absolute; /* Posiciona cada elemento de forma absoluta dentro del carrusel */
+    width: 100%; /* Cada elemento ocupa todo el ancho del carrusel */
+    height: 100%; /* Cada elemento ocupa toda la altura del carrusel */
+    opacity: 0; /* Inicialmente invisible */
+    transition: opacity 1s ease-in-out; /* Transición suave para el cambio de opacidad */
+}
+
+/* Estilo de las imágenes dentro de los elementos del carrusel */
+.carousel-item img {
+    width: 100%; /* Imagen ocupa todo el ancho del elemento */
+    height: 100%; /* Imagen ocupa toda la altura del elemento */
+    object-fit: cover; /* Asegura que la imagen cubra el área sin deformarse */
+}
+
+/* Leyenda del carrusel */
+.carousel-caption {
+    position: absolute; /* Posiciona la leyenda de forma absoluta */
+    bottom: 20px; /* Espaciado desde el borde inferior */
+    left: 20px; /* Espaciado desde el borde izquierdo */
+    font-size: 1.5rem; /* Tamaño de fuente de la leyenda */
+    color: white; /* Color del texto de la leyenda */
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    padding: 10px; /* Espaciado interno */
+    border-radius: 10px; /* Bordes redondeados */
+}
+
+/* Mostrar el primer elemento del carrusel por defecto */
+.carousel-item:first-child {
+    opacity: 1; /* Hace visible el primer elemento */
+}
+
+/* Estilo para el logo */
+#image {
+    position: fixed; /* Posición fija en la ventana */
+    bottom: 10px; /* Espaciado desde el borde inferior */
+    left: 10px; /* Espaciado desde el borde izquierdo */
+    width: 170px; /* Ancho del logo */
+    height: 170px; /* Altura del logo */
+    z-index: 1002; /* Asegura que esté por encima de otros elementos */
+}
+
+/* Sección de encabezado */
+header {
+    width: 100%; /* Ancho completo */
+    max-width: 100%; /* Sin límite de ancho */
+    padding-left: 100px; /* Espaciado a la izquierda */
+    height: 50px; /* Altura del encabezado */
+    display: flex; /* Usa flexbox para alinear elementos */
+    align-items: center; /* Centra verticalmente los elementos dentro del encabezado */
+    position: relative; /* Posición relativa para contenido absoluto */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+}
+
+/* Estilo para los enlaces de navegación en el encabezado */
+header nav a {
+    color: #fff; /* Color del texto de los enlaces */
+    margin-right: 5px; /* Espacio entre enlaces */
+    padding: 5px 10px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño de fuente */
+    transition: 0.2s; /* Transición suave para cambios */
+    text-decoration: none; /* Sin subrayado en los enlaces */
+}
+
+/* Estilo para enlace activo */
+a.active {
+    background: #ffffffcb; /* Fondo semitransparente para enlace activo */
+    border-radius: 2px; /* Bordes redondeados */
+}
+
+/* Estilo para el efecto hover en enlaces */
+a:hover {
+    background: #14ff72cb; /* Fondo semitransparente en hover */
+    border-radius: 2px; /* Bordes redondeados */
+}
+
+/* Estilo para el carrusel */
+.carousel {
+    width: 100vw; /* Ancho del carrusel */
+    height: 100vh; /* Altura del carrusel */
+    margin-top: -50px; /* Mueve el carrusel hacia arriba */
+    overflow: hidden; /* Oculta contenido desbordado */
+    position: relative; /* Posición relativa para los elementos internos */
+    border-radius: none; /* Sin bordes redondeados */
+}
+
+/* Estilo para los elementos de la lista dentro del carrusel */
+.carousel .list .item {
+    width: 180px; /* Ancho de los elementos de la lista */
+    height: 250px; /* Altura de los elementos de la lista */
+    position: absolute; /* Posiciona los elementos de forma absoluta */
+    top: 80%; /* Alinea desde el borde inferior */
+    transform: translateY(-70%); /* Mueve hacia arriba el elemento */
+    left: 70%; /* Alinea desde el borde izquierdo */
+    border-radius: 20px; /* Bordes redondeados */
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); /* Sombra para profundidad */
+    background-position: 50% 50%; /* Centra la imagen de fondo */
+    background-size: cover; /* Asegura que la imagen cubra el área */
+    z-index: 100; /* Asegura que los elementos se dibujen en el orden correcto */
+    transition: 1s; /* Transición suave para cambios */
+}
+
+/* Ajustes específicos para los primeros elementos de la lista */
+.carousel .list .item:nth-child(1),
+.carousel .list .item:nth-child(2) {
+    top: 0; /* Alinea al borde superior */
+    left: 0; /* Alinea al borde izquierdo */
+    transform: translate(0, 0); /* Sin desplazamiento */
+    border-radius: 20px; /* Bordes redondeados */
+    width: 100%; /* Ancho completo */
+    height: 100%; /* Altura completa */
+}
+
+/* Posiciona elementos adicionales en el carrusel */
+.carousel .list .item:nth-child(3) {
+    left: 67%; /* Desplazamiento a la derecha */
+}
+
+.carousel .list .item:nth-child(4) {
+    left: calc(67% + 200px); /* Desplazamiento adicional */
+}
+
+.carousel .list .item:nth-child(5) {
+    left: calc(67% + 400px); /* Desplazamiento adicional */
+}
+
+.carousel .list .item:nth-child(6) {
+    left: calc(67% + 600px); /* Desplazamiento adicional */
+}
+
+/* Oculta elementos a partir del séptimo */
+.carousel .list .item:nth-child(n+7) {
+    left: calc(67% + 800px); /* Posición fuera de vista */
+    opacity: 0; /* Hacer invisible */
+}
+
+
+/*Tercera vez editado --------------------------------------*/
+
+
+
+
+/* Estilo para el contenido de los elementos del carrusel */
+.list .item .content {
+    position: absolute; /* Posición absoluta para que se superponga en el elemento del carrusel */
+    top: 35%; /* Posiciona el contenido un 35% desde la parte superior */
+    left: 100px; /* Espacio desde el borde izquierdo */
+    transform: translateY(-50%); /* Centra verticalmente el contenido */
+    width: 400px; /* Ancho fijo del contenido */
+    text-align: left; /* Alinea el texto a la izquierda */
+    color: #fff; /* Color del texto */
+    display: none; /* Oculta el contenido por defecto */
+    border-radius: 20px; /* Bordes redondeados */
+}
+
+/* Muestra el contenido del segundo elemento del carrusel */
+.list .item:nth-child(2) .content {
+    display: block; /* Muestra el contenido para el segundo elemento */
+}
+
+/* Estilo para el título dentro del contenido */
+.content .title {
+    font-size: 100px; /* Tamaño de fuente del título */
+    color: #ffffff; /* Color del texto del título */
+    font-weight: bold; /* Estilo de fuente en negrita */
+    line-height: 2; /* Espaciado entre líneas */
+    width: 1500px; /* Ancho del título */
+
+    opacity: 0; /* Inicialmente invisible */
+    animation: animate 1s ease-in-out 0.3s 1 forwards; /* Animación para aparecer */
+}
+
+/* Estilo para el nombre dentro del contenido */
+.content .name {
+    font-size: 100px; /* Tamaño de fuente del nombre */
+    text-transform: uppercase; /* Convierte el texto a mayúsculas */
+    font-weight: bold; /* Estilo de fuente en negrita */
+    line-height: 1; /* Espaciado entre líneas */
+    text-shadow: 3px 4px 4px rgba(255, 255, 255, 0.8); /* Sombra del texto para mayor legibilidad */
+
+    opacity: 0; /* Inicialmente invisible */
+    animation: animate 1s ease-in-out 0.6s 1 forwards; /* Animación para aparecer */
+}
+
+/* Estilo para la descripción dentro del contenido */
+.content .des {
+    margin-top: 10px; /* Espaciado superior */
+    margin-bottom: 20px; /* Espaciado inferior */
+    font-size: 18px; /* Tamaño de fuente de la descripción */
+    margin-left: 5px; /* Espacio a la izquierda */
+
+    opacity: 0; /* Inicialmente invisible */
+    animation: animate 1s ease-in-out 0.9s 1 forwards; /* Animación para aparecer */
+    text-align: center; /* Alinea el texto al centro */
+    background-color: white; /* Fondo blanco */
+    padding: 20px; /* Espaciado interno */
+    border-radius: 30px; /* Bordes redondeados */
+    color: #000000; /* Color del texto */
+    box-shadow: -5px 9px 9px 2px black; /* Sombra para profundidad */
+}
+
+/* Estilo para los botones dentro del contenido */
+.content .btn {
+    margin-left: 5px; /* Espacio a la izquierda */
+
+    opacity: 0; /* Inicialmente invisible */
+    animation: animate 1s ease-in-out 1.2s 1 forwards; /* Animación para aparecer */
+}
+
+/* Estilo para los botones dentro de la sección de botones */
+.content .btn button {
+    padding: 10px 20px; /* Espaciado interno del botón */
+    border: none; /* Sin borde */
+    cursor: pointer; /* Cambia el cursor al pasar por encima */
+    font-size: 16px; /* Tamaño de fuente del botón */
+    border: 2px solid #fff; /* Borde blanco */
+}
+
+/* Espaciado específico para el primer botón */
+.content .btn button:nth-child(1) {
+    margin-right: 15px; /* Espacio a la derecha */
+}
+
+/* Estilo para el segundo botón */
+.content .btn button:nth-child(2) {
+    background: transparent; /* Fondo transparente */
+    color: #14ff72cb; /* Color del texto */
+    border: 2px solid #fff; /* Borde blanco */
+    transition: 0.3s; /* Transición suave para cambios */
+}
+
+/* Efecto hover para el segundo botón */
+.content .btn button:nth-child(2):hover {
+    background-color: #14ff72cb; /* Fondo verde en hover */
+    color: #fff; /* Texto blanco en hover */
+    border-color: #14ff72cb; /* Cambia el color del borde en hover */
+}
+
+/* Animación para el contenido */
+@keyframes animate {
+    from {
+        opacity: 0; /* Comienza invisible */
+        transform: translate(0, 100px); /* Desplazamiento desde abajo */
+        filter: blur(33px); /* Comienza desenfocado */
+    }
+
+    to {
+        opacity: 1; /* Finaliza visible */
+        transform: translate(0); /* Sin desplazamiento */
+        filter: blur(0); /* Finaliza enfocado */
+    }
+}
+
+/* Estilo para las flechas de navegación del carrusel */
+.arrows {
+    position: absolute; /* Posiciona las flechas de forma absoluta */
+    top: 80%; /* Espaciado desde el borde superior */
+    right: 52%; /* Alinea desde la derecha */
+    z-index: 100; /* Asegura que esté por encima de otros elementos */
+    width: 300px; /* Ancho fijo para el contenedor de flechas */
+    max-width: 30%; /* Ancho máximo del contenedor */
+    display: flex; /* Usa flexbox para alinear las flechas */
+    gap: 10px; /* Espacio entre flechas */
+    align-items: center; /* Centra verticalmente las flechas */
+}
+
+/* Estilo para los botones de flecha */
+.arrows button {
+    width: 50px; /* Ancho del botón de flecha */
+    height: 50px; /* Altura del botón de flecha */
+    border-radius: 50%; /* Bordes redondeados */
+    background-color: #ffffff; /* Fondo blanco */
+    color: #000000; /* Color del texto */
+    border: none; /* Sin borde */
+    outline: none; /* Sin contorno */
+    font-size: 16px; /* Tamaño de fuente del botón */
+    font-family: monospace; /* Tipo de letra monospace */
+    font-weight: bold; /* Estilo de fuente en negrita */
+    transition: .5s; /* Transición suave para cambios */
+    cursor: pointer; /* Cambia el cursor al pasar por encima */
+    box-shadow: 3px 3px 3px rgb(0, 0, 0); /* Sombra para profundidad */
+    
+    -webkit-tap-highlight-color: transparent; /* Elimina el color de resaltado en dispositivos táctiles */
+}
+
+/* Eliminar el enfoque (focus) después del clic */
+.arrows button:focus {
+    outline: none; /* Sin contorno cuando está enfocado */
+}
+
+
+/*Cuarta vez editado ------------------------------------------------------------*/
+/* Cambiar estilo solo al pasar el ratón por encima en dispositivos con hover */
+@media (hover: hover) and (pointer: fine) {
+    .arrows button:hover {
+        background: #c4c4c4a1; /* Fondo gris claro al pasar el mouse */
+        color: #ffffff; /* Cambia el texto a blanco */
+    }
+}
+
+/* Para dispositivos táctiles, eliminar cualquier cambio tras hacer clic */
+@media (hover: none) and (pointer: coarse) {
+    .arrows button:active {
+        background-color: #ffffff; /* Fondo blanco al hacer clic */
+        color: #000000; /* Texto negro al hacer clic */
+    }
+}
+
+/* Estilo para la barra de tiempo del carrusel */
+.carousel .timeRunning {
+    position: absolute; /* Posición absoluta */
+    z-index: 1000; /* Asegura que esté encima de otros elementos */
+    width: 0%; /* Ancho inicial */
+    height: 4px; /* Altura de la barra */
+    background-color: #000000; /* Fondo negro */
+    border: rgb(0, 0, 0) 4px solid; /* Borde negro */
+    left: 0; /* Alineación a la izquierda */
+    top: 0; /* Alineación a la parte superior */
+    animation: runningTime 7s linear 1 forwards; /* Animación de la barra de tiempo */
+}
+
+/* Ajusta el tamaño de las imágenes dentro del carrusel */
+.carousel .list .item img {
+    width: 100%; /* Ajusta el ancho al 100% del contenedor */
+    height: 100%; /* Ajusta la altura al 100% del contenedor */
+    object-fit: cover; /* Cubre el contenedor sin distorsionar la imagen */
+    border-radius: 0px; /* Sin bordes redondeados */
+}
+
+/* Imagen activa sin border-radius */
+.item.active img {
+    border-radius: 0px; /* Sin border-radius para la imagen activa */
+}
+
+/* Animación para la barra de tiempo */
+@keyframes runningTime {
+    from { width: 0%; } /* Comienza con ancho 0 */
+    to { width: 100%; } /* Finaliza con ancho completo */
+}
+
+/* Responsive Design */
+@media screen and (max-width: 999px) {
+    header {
+        padding-left: 50px; /* Reduce el espaciado a la izquierda en pantallas pequeñas */
+    }
+
+    .list .item .content {
+        margin-top: -45%; /* Ajusta la posición vertical del contenido */
+        left: 0px; /* Alinea el contenido a la izquierda */
+        position: absolute; /* Posición absoluta */
+    }
+
+    .list .item .content .des {
+        width: 300px; /* Ancho fijo para la descripción */
+        margin-left: 60px; /* Espaciado a la izquierda */
+    }
+
+    .content .title, .content .name {
+        font-size: 70px; /* Tamaño de fuente reducido */
+    }
+
+    .content .des {
+        font-size: 16px; /* Tamaño de fuente reducido para la descripción */
+        margin-top: 0px; /* Sin margen superior */
+    }
+
+    .arrows {
+        margin-top: -40%; /* Ajusta la posición vertical de las flechas */
+    }
+
+    /* Mostrar al menos dos imágenes en pantallas medianas */
+    .carousel .list .item:nth-child(1),
+    .carousel .list .item:nth-child(2) {
+        top: 0; /* Alinea la primera y segunda imagen en la parte superior */
+        left: 0%; /* Alinea a la izquierda */
+        transform: translateX(0); /* Sin transformación */
+    }
+
+    .carousel .list .item:nth-child(3) {
+        left: 75%; /* Posiciona la tercera imagen a la derecha */
+        transform: translateX(-50%); /* Centra la tercera imagen */
+    }
+
+    .carousel .list .item:nth-child(4) {
+        left: 90%; /* Posiciona la cuarta imagen */
+    }
+}
+
+@media screen and (max-width: 690px) {
+    header nav a {
+        font-size: 14px; /* Reduce el tamaño de fuente en el menú */
+        margin-right: 0; /* Elimina el margen derecho */
+    }
+
+    .list .item .content {
+        top: 40%; /* Ajusta la posición vertical del contenido */
+    }
+
+    .content .title, .content .name {
+        font-size: 45px; /* Tamaño de fuente reducido para título y nombre */
+    }
+
+    .content .btn button {
+        padding: 10px 15px; /* Ajusta el espaciado interno de los botones */
+        font-size: 14px; /* Tamaño de fuente reducido para botones */
+    }
+}
+
+/* Asegúrate de que el texto sea legible */
+.content .title {
+    text-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5); /* Sombra para mejorar la legibilidad */
+}
+
+/* Aplicar desenfoque solo a la imagen grande (primer elemento) */
+.carousel .list .item:nth-child(1) img,
+.carousel .list .item:nth-child(2) img {
+    filter: blur(3px); /* Desenfoque de 3px */
+}
+
+/* Añadir overlay solo a la imagen grande */
+.carousel .list .item:nth-child(1)::before,
+.carousel .list .item:nth-child(2)::before {
+    content: ''; /* Crea un pseudo-elemento */
+    position: absolute; /* Posición absoluta */
+    top: 0; /* Alinea a la parte superior */
+    left: 0; /* Alinea a la izquierda */
+    width: 100%; /* Ancho completo */
+    height: 100%; /* Altura completa */
+    background: rgba(0, 0, 0, 0.4); /* Fondo negro con opacidad */
+    z-index: 1; /* Asegura que esté por debajo del contenido */
+}
+
+/* Asegurar que el contenido esté por encima del overlay */
+.carousel .list .item:nth-child(2) .content {
+    z-index: 2; /* Asegura que esté por encima del overlay */
+    position: absolute; /* Posición absoluta */
+}
+
+/* Border radius solo para las imágenes pequeñas de la derecha */
+.carousel .list .item:nth-child(n+3) img {
+    border-radius: 30px; /* Bordes redondeados para imágenes pequeñas */
+    box-shadow: 5px 5px 5px black; /* Sombra para las imágenes pequeñas */
+}
+
+/* Mantener las imágenes grandes sin border-radius */
+.carousel .list .item:nth-child(1) img,
+.carousel .list .item:nth-child(2) img {
+    border-radius: 0; /* Sin bordes redondeados */
+}
+
+/* Estilo para el botón de detener */
+#stopBtn {
+    display: none; /* Ocultar el botón de detener por defecto */
+}
+
+/* Estilo para el área de entrada del usuario */
+.userInput {
+    overflow: hidden; /* Oculta la barra de desplazamiento */
+    resize: none; /* Evita que el usuario pueda cambiar el tamaño del textarea */
+}
+
+/* Historial de conversación (solo afecta al historial de mensajes) */
+.chat-history {
+    height: 340px; /* Altura fija para el área de conversación */
+    overflow-y: auto; /* Barra de desplazamiento si el contenido es largo */
+    background-color: white; /* Fondo blanco */
+    border: 1px solid #ccc; /* Borde alrededor del historial */
+    border-radius: 5px; /* Bordes redondeados */
+    padding: 10px; /* Espaciado interno */
+    box-shadow: 0px 4px 3px black; /* Sombra para profundidad */
+}
